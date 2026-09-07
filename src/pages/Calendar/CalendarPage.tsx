@@ -3,6 +3,7 @@ import { Calendar, Badge, Tabs, List, DatePicker, Typography, Space, Card, Spin 
 import dayjs, { Dayjs } from 'dayjs';
 import { scheduleApi } from '../../api/schedule.api';
 import { StatusBadge } from '../../components/common/StatusBadge';
+import { useMediaQuery } from '../../hooks/useMediaQuery';
 import type { Schedule } from '../../types';
 
 const { Title, Text } = Typography;
@@ -11,6 +12,7 @@ export default function CalendarPage() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
   const [selectedDate, setSelectedDate] = useState<Dayjs>(dayjs());
   const [loading, setLoading] = useState(false);
+  const isMobile = useMediaQuery('(max-width: 768px)');
 
   const fetchSchedules = async (start: Dayjs, end: Dayjs) => {
     setLoading(true);
@@ -51,7 +53,7 @@ export default function CalendarPage() {
                     }
                   }}
                   format="DD/MM/YYYY"
-                  style={{ width: 200 }}
+                  style={{ width: isMobile ? '100%' : 200 }}
                 />
                 <Title level={5}>{selectedDate.format('dddd, DD/MM/YYYY')}</Title>
                 {loading ? <Spin /> : dailySchedules.length === 0 ? (
@@ -79,8 +81,9 @@ export default function CalendarPage() {
             key: 'monthly',
             label: 'Tháng',
             children: (
-              <Card>
+              <Card bodyStyle={{ padding: isMobile ? 8 : 24 }}>
                 <Calendar
+                  fullscreen={!isMobile}
                   onSelect={(date) => setSelectedDate(date)}
                   onPanelChange={(date) => fetchSchedules(date.startOf('month'), date.endOf('month'))}
                   cellRender={(date) => {

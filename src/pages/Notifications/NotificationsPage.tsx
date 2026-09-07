@@ -21,12 +21,12 @@ export default function NotificationsPage() {
 
   return (
     <div>
-      <Space style={{ marginBottom: 16, justifyContent: 'space-between', width: '100%' }}>
+      <Space wrap style={{ marginBottom: 16, justifyContent: 'space-between', width: '100%' }}>
         <Space>
           <Title level={4} style={{ margin: 0 }}>🔔 Thông báo</Title>
           {unreadCount > 0 && <Badge count={unreadCount} />}
         </Space>
-        <Space>
+        <Space wrap>
           <Button onClick={markAllRead} disabled={unreadCount === 0}>Đánh dấu tất cả đã đọc</Button>
           <Button danger icon={<DeleteOutlined />} onClick={clearAll} disabled={notifications.length === 0}>Xóa tất cả</Button>
         </Space>

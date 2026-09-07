@@ -5,6 +5,8 @@ export const paymentApi = {
   getSummary: () => apiClient.get('/payments/summary'),
   create: (data: object) => apiClient.post('/payments', data),
   update: (id: string, data: object) => apiClient.put(`/payments/${id}`, data),
+  toggleStatus: (id: string) => apiClient.patch(`/payments/${id}/toggle`),
+  delete: (id: string) => apiClient.delete(`/payments/${id}`),
   addTransaction: (id: string, data: { amount: number; paidAt: string; method: string; notes?: string }) =>
     apiClient.post(`/payments/${id}/transaction`, data),
 };

@@ -1,9 +1,15 @@
 // ─── User ───────────────────────────────────────────────────────────────────
+export type UserRole = 'PARENT' | 'STUDENT';
+
 export interface User {
   _id: string;
   name: string;
   email: string;
   avatar?: string;
+  role: UserRole;
+  linkCode?: string;
+  children?: User[];
+  parents?: User[];
   notificationPreferences: {
     reminderTimes: number[];
     emailNotifications: boolean;
@@ -98,10 +104,14 @@ export interface Transaction {
 export interface Payment {
   _id: string;
   userId: string;
-  scheduleId: Schedule | string;
+  scheduleId?: Schedule | string;
+  subjectId?: Subject | string;
   periodLabel: string;
   periodStart?: string;
   periodEnd?: string;
+  dueDate?: string;
+  paidAt?: string;
+  notes?: string;
   totalSessions: number;
   totalAmount: number;
   paidAmount: number;
@@ -135,4 +145,6 @@ export interface PaymentSummary {
   unpaidCount: number;
   partialCount: number;
   paidCount: number;
+  overdueCount?: number;
+  dueSoonCount?: number;
 }

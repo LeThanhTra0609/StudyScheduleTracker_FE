@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Form, Input, Button, Card, Typography, Divider, App } from 'antd';
+import { Form, Input, Button, Card, Typography, Divider, App, Radio } from 'antd';
 import { Link, useNavigate } from 'react-router-dom';
 import { authApi } from '../../api/auth.api';
 import { useAuthStore } from '../../store/authStore';
@@ -12,7 +12,7 @@ export default function RegisterPage() {
   const navigate = useNavigate();
   const { message } = App.useApp();
 
-  const onFinish = async (values: { name: string; email: string; password: string }) => {
+  const onFinish = async (values: { name: string; email: string; password: string; role?: string }) => {
     setLoading(true);
     try {
       const res = await authApi.register(values);
@@ -28,14 +28,29 @@ export default function RegisterPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f2f5' }}>
-      <Card style={{ width: 420, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
-        <div style={{ textAlign: 'center', marginBottom: 24 }}>
+    <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', background: '#f0f2f5', padding: '24px 16px' }}>
+      <Card style={{ width: 440, boxShadow: '0 4px 24px rgba(0,0,0,0.08)' }}>
+        <div style={{ textAlign: 'center', marginBottom: 20 }}>
           <Title level={3} style={{ margin: 0 }}>📚 Study Tracker</Title>
           <Text type="secondary">Tạo tài khoản mới</Text>
         </div>
 
         <Form layout="vertical" onFinish={onFinish}>
+          <Form.Item name="role" label="Vai trò của bạn" initialValue="STUDENT">
+            <Radio.Group style={{ width: '100%', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 12 }}>
+              <Radio.Button value="STUDENT" style={{ height: 'auto', padding: '10px 8px', textAlign: 'center', borderRadius: 8 }}>
+                <div style={{ fontSize: 20 }}>🎓</div>
+                <div style={{ fontWeight: 600 }}>Học sinh</div>
+                <div style={{ fontSize: 11, color: '#8c8c8c' }}>Tự lên lịch học</div>
+              </Radio.Button>
+              <Radio.Button value="PARENT" style={{ height: 'auto', padding: '10px 8px', textAlign: 'center', borderRadius: 8 }}>
+                <div style={{ fontSize: 20 }}>👨‍👩‍👧</div>
+                <div style={{ fontWeight: 600 }}>Phụ huynh</div>
+                <div style={{ fontSize: 11, color: '#8c8c8c' }}>Quản lý lịch con</div>
+              </Radio.Button>
+            </Radio.Group>
+          </Form.Item>
+
           <Form.Item name="name" label="Họ và tên" rules={[{ required: true, message: 'Vui lòng nhập tên' }]}>
             <Input placeholder="Nguyễn Văn A" size="large" />
           </Form.Item>

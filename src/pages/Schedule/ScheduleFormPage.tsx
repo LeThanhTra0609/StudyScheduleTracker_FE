@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import {
   Form, Input, Select, Button, DatePicker, TimePicker, Switch, Radio,
-  Typography, Card, Space, Alert, Checkbox, InputNumber, App, Divider,
+  Typography, Card, Space, Alert, Checkbox, InputNumber, App, Divider, Row, Col,
 } from 'antd';
 import { useNavigate, useParams } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -127,17 +127,23 @@ export default function ScheduleFormPage() {
             </Radio.Group>
           </Form.Item>
 
-          <Space wrap>
-            <Form.Item name="date" label="Ngày học" rules={[{ required: true }]}>
-              <DatePicker format="DD/MM/YYYY" onChange={checkConflict} />
-            </Form.Item>
-            <Form.Item name="startTime" label="Bắt đầu" rules={[{ required: true }]}>
-              <TimePicker format="HH:mm" minuteStep={15} onChange={checkConflict} />
-            </Form.Item>
-            <Form.Item name="endTime" label="Kết thúc" rules={[{ required: true }]}>
-              <TimePicker format="HH:mm" minuteStep={15} onChange={checkConflict} />
-            </Form.Item>
-          </Space>
+          <Row gutter={[12, 12]}>
+            <Col xs={24} sm={8}>
+              <Form.Item name="date" label="Ngày học" rules={[{ required: true }]} style={{ marginBottom: 12 }}>
+                <DatePicker format="DD/MM/YYYY" onChange={checkConflict} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={8}>
+              <Form.Item name="startTime" label="Bắt đầu" rules={[{ required: true }]} style={{ marginBottom: 12 }}>
+                <TimePicker format="HH:mm" minuteStep={15} onChange={checkConflict} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+            <Col xs={24} sm={8}>
+              <Form.Item name="endTime" label="Kết thúc" rules={[{ required: true }]} style={{ marginBottom: 12 }}>
+                <TimePicker format="HH:mm" minuteStep={15} onChange={checkConflict} style={{ width: '100%' }} />
+              </Form.Item>
+            </Col>
+          </Row>
 
           <Form.Item name="locationId" label="Địa điểm">
             <Select placeholder="Chọn địa điểm" allowClear options={locations.map(l => ({ value: l._id, label: l.name }))} />

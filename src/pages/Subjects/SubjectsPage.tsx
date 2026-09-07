@@ -86,7 +86,7 @@ export default function SubjectsPage() {
         <Button type="primary" icon={<PlusOutlined />} onClick={() => openModal()}>Thêm môn học</Button>
       </Space>
 
-      <Table dataSource={subjects} columns={columns} rowKey="_id" loading={loading} />
+      <Table dataSource={subjects} columns={columns} rowKey="_id" loading={loading} scroll={{ x: 600 }} />
 
       <Modal
         title={editing ? 'Chỉnh sửa môn học' : 'Thêm môn học'}

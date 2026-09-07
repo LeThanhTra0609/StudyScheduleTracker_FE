@@ -85,7 +85,7 @@ export default function StatisticsPage() {
         }
         style={{ marginBottom: 16 }}
       >
-        <Table dataSource={monthly?.bySubject ?? []} columns={monthlyColumns} rowKey="name" pagination={false} size="small" />
+        <Table dataSource={monthly?.bySubject ?? []} columns={monthlyColumns} rowKey="name" pagination={false} size="small" scroll={{ x: 450 }} />
       </Card>
 
       {/* Tuition */}
@@ -95,7 +95,7 @@ export default function StatisticsPage() {
           <Col span={8}><Statistic title="Đã thanh toán" value={tuition?.paid ?? 0} formatter={(v) => `${Number(v).toLocaleString('vi-VN')}đ`} valueStyle={{ color: 'green' }} /></Col>
           <Col span={8}><Statistic title="Còn lại" value={tuition?.remaining ?? 0} formatter={(v) => `${Number(v).toLocaleString('vi-VN')}đ`} valueStyle={{ color: 'red' }} /></Col>
         </Row>
-        <Table dataSource={tuition?.payments ?? []} columns={tuitionColumns} rowKey="_id" size="small" pagination={false} />
+        <Table dataSource={tuition?.payments ?? []} columns={tuitionColumns} rowKey="_id" size="small" pagination={false} scroll={{ x: 550 }} />
       </Card>
     </div>
   );

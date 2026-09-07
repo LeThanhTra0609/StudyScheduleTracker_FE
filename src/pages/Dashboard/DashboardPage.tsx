@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Row, Col, Card, Statistic, List, Tag, Typography, Spin, Button, Space } from 'antd';
+import { Row, Col, Card, Statistic, List, Tag, Typography, Spin, Button, Space, Alert } from 'antd';
 import {
   CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined,
   DollarOutlined, ArrowRightOutlined,
@@ -59,6 +59,25 @@ export default function DashboardPage() {
         Dashboard – {dayjs().format('dddd, DD/MM/YYYY')}
       </Title>
 
+      {/* Tuition deadline alert if any */}
+      {paymentSummary && ((paymentSummary.overdueCount ?? 0) > 0 || (paymentSummary.dueSoonCount ?? 0) > 0) && (
+        <Alert
+          type={(paymentSummary.overdueCount ?? 0) > 0 ? 'error' : 'warning'}
+          showIcon
+          message={
+            (paymentSummary.overdueCount ?? 0) > 0
+              ? `⚠️ Bạn có ${paymentSummary.overdueCount} khoản học phí đã QUÁ HẠN nộp!`
+              : `⏰ Bạn có ${paymentSummary.dueSoonCount} khoản học phí sắp đến hạn nộp trong 7 ngày tới.`
+          }
+          action={
+            <Button size="small" type="primary" onClick={() => navigate('/payments')}>
+              Xem & Đánh dấu
+            </Button>
+          }
+          style={{ marginBottom: 16 }}
+        />
+      )}
+
       {/* Summary Cards */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={12} sm={6}>
@@ -79,9 +98,9 @@ export default function DashboardPage() {
         <Col xs={12} sm={6}>
           <Card>
             <Statistic
-              title="Còn nợ học phí"
+              title="Học phí chưa nộp"
               value={paymentSummary?.remainingAmount ?? 0}
-              prefix={<DollarOutlined style={{ color: paymentSummary?.remainingAmount ? 'red' : 'green' }} />}
+              prefix={<DollarOutlined style={{ color: paymentSummary?.remainingAmount ? '#cf1322' : '#389e0d' }} />}
               formatter={(v) => `${Number(v).toLocaleString('vi-VN')} đ`}
             />
           </Card>

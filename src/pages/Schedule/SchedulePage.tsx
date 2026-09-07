@@ -80,16 +80,34 @@ export default function SchedulePage() {
         <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/schedules/new')}>Thêm lịch</Button>
       </Space>
 
-      <Space style={{ marginBottom: 16, flexWrap: 'wrap' }} size={8}>
-        <Input prefix={<SearchOutlined />} placeholder="Tìm môn học..." value={search} onChange={e => setSearch(e.target.value)} style={{ width: 200 }} />
-        <Select placeholder="Loại lịch" allowClear style={{ width: 150 }} onChange={setFilterType} options={[{ value: 'ACADEMIC', label: 'Chính khóa' }, { value: 'EXTRA_CLASS', label: 'Học thêm' }]} />
-        <Select placeholder="Trạng thái" allowClear style={{ width: 150 }} onChange={setFilterStatus} options={[
-          { value: 'UPCOMING', label: 'Sắp diễn ra' },
-          { value: 'COMPLETED', label: 'Đã hoàn thành' },
-          { value: 'ABSENT', label: 'Vắng mặt' },
-          { value: 'CANCELLED', label: 'Đã hủy' },
-        ]} />
-      </Space>
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+        <Input
+          prefix={<SearchOutlined />}
+          placeholder="Tìm môn học..."
+          value={search}
+          onChange={e => setSearch(e.target.value)}
+          style={{ flex: '1 1 180px', minWidth: 150 }}
+        />
+        <Select
+          placeholder="Loại lịch"
+          allowClear
+          style={{ flex: '1 1 120px', minWidth: 120 }}
+          onChange={setFilterType}
+          options={[{ value: 'ACADEMIC', label: 'Chính khóa' }, { value: 'EXTRA_CLASS', label: 'Học thêm' }]}
+        />
+        <Select
+          placeholder="Trạng thái"
+          allowClear
+          style={{ flex: '1 1 140px', minWidth: 130 }}
+          onChange={setFilterStatus}
+          options={[
+            { value: 'UPCOMING', label: 'Sắp diễn ra' },
+            { value: 'COMPLETED', label: 'Đã hoàn thành' },
+            { value: 'ABSENT', label: 'Vắng mặt' },
+            { value: 'CANCELLED', label: 'Đã hủy' },
+          ]}
+        />
+      </div>
 
       <Table dataSource={filtered} columns={columns} rowKey="_id" loading={loading} scroll={{ x: 700 }} />
     </div>
