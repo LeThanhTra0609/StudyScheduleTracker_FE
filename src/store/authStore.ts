@@ -58,6 +58,7 @@ export const useAuthStore = create<AuthState>()(
         const { user } = get();
         if (user) disconnectSocket(user._id);
         localStorage.removeItem('token');
+        localStorage.removeItem('auth-storage');
         set({ user: null, token: null, selectedChildId: null, isAuthenticated: false });
       },
     }),

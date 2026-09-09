@@ -76,7 +76,7 @@ export default function AttendancePage() {
 
   return (
     <div>
-      <Title level={4}>✅ Điểm danh</Title>
+      <Title level={4}>Điểm danh</Title>
       <Tabs
         items={[
           {

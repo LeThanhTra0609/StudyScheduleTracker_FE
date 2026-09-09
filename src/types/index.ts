@@ -1,19 +1,32 @@
 // ─── User ───────────────────────────────────────────────────────────────────
 export type UserRole = 'PARENT' | 'STUDENT';
 
+export interface NotificationPreferences {
+  reminderTimes: number[];
+  emailNotifications: boolean;
+  classReminder?: boolean;
+  dailyReminder?: boolean;
+  dailyReminderTime?: string;
+  advanceDayReminder?: boolean;
+  advanceDayReminderTime?: string;
+  attendanceAlerts?: boolean;
+  scheduleChangeAlerts?: boolean;
+  paymentDueAlerts?: boolean;
+  soundEnabled?: boolean;
+}
+
 export interface User {
   _id: string;
   name: string;
   email: string;
   avatar?: string;
+  phone?: string;
+  bio?: string;
   role: UserRole;
   linkCode?: string;
   children?: User[];
   parents?: User[];
-  notificationPreferences: {
-    reminderTimes: number[];
-    emailNotifications: boolean;
-  };
+  notificationPreferences?: NotificationPreferences;
 }
 
 // ─── Subject ─────────────────────────────────────────────────────────────────

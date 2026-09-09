@@ -76,7 +76,7 @@ export default function SchedulePage() {
   return (
     <div>
       <Space style={{ marginBottom: 16, justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
-        <Title level={4} style={{ margin: 0 }}>📋 Lịch học của tôi</Title>
+        <Title level={4} style={{ margin: 0 }}>Lịch học của tôi</Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/schedules/new')}>Thêm lịch</Button>
       </Space>
 

@@ -53,7 +53,7 @@ export default function StatisticsPage() {
 
   return (
     <div>
-      <Title level={4}>📊 Thống kê</Title>
+      <Title level={4}>Thống kê</Title>
 
       {/* Overall */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>

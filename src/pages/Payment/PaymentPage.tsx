@@ -381,7 +381,7 @@ export default function PaymentPage() {
       >
         <div>
           <Title level={4} style={{ margin: 0 }}>
-            💰 Theo dõi hạn nộp học phí
+            Theo dõi hạn nộp học phí
           </Title>
           <Paragraph type="secondary" style={{ margin: 0 }}>
             Theo dõi thời hạn và đánh dấu hoàn thành chỉ với 1 click khi đến hạn nộp

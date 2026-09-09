@@ -1,3 +1,28 @@
+/* Cozy Forest & Animal Crossing Theme - Study Schedule Tracker */
+
+:root {
+  --font-primary: 'Quicksand', 'Nunito', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --color-forest-dark: #23412c;
+  --color-forest-deep: #1c3523;
+  --color-forest-medium: #2e5239;
+  --color-forest-light: #44714f;
+  --color-sage: #52825b;
+  --color-sage-soft: #eaf3ec;
+  --color-cream-bg: #f3eee3;
+  --color-cream-card: #fdfcf9;
+  --color-cream-border: #e6ded0;
+  --color-wood-dark: #7a4b22;
+  --color-wood-primary: #8d5b32;
+  --color-wood-light: #dfb282;
+  --color-wood-bg: #f9f4ed;
+  --color-text-main: #243527;
+  --color-text-muted: #6e7f72;
+  --radius-card: 22px;
+  --radius-pill: 999px;
+  --shadow-cozy: 0 4px 16px rgba(40, 60, 44, 0.06);
+  --shadow-hover: 0 8px 24px rgba(40, 60, 44, 0.12);
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -5,27 +30,150 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  font-family: var(--font-primary);
+  background-color: var(--color-cream-bg);
+  color: var(--color-text-main);
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 #root {
   min-height: 100vh;
 }
 
-/* Ant Design overrides */
+/* Ant Design Global Layout Overrides */
 .ant-layout {
   min-height: 100vh;
+  background: var(--color-cream-bg) !important;
 }
 
-/* Mobile-friendly scrollbar */
+.ant-layout-header {
+  line-height: normal !important;
+}
+
+/* Cozy Card Style */
+.cozy-card {
+  background: var(--color-cream-card) !important;
+  border: 1px solid var(--color-cream-border) !important;
+  border-radius: var(--radius-card) !important;
+  box-shadow: var(--shadow-cozy) !important;
+  transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+}
+
+.cozy-card:hover {
+  box-shadow: var(--shadow-hover) !important;
+  transform: translateY(-2px);
+}
+
+/* Wooden Plaque Style */
+.wooden-plaque {
+  background: linear-gradient(145deg, #966236 0%, #7d4d24 100%);
+  border: 2px solid #5d3615;
+  border-radius: 16px;
+  color: #fff9f0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 10px rgba(70, 38, 14, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.wooden-plaque::before,
+.wooden-plaque::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #3e220c;
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.3);
+}
+
+.wooden-plaque::before {
+  left: 6px;
+}
+
+.wooden-plaque::after {
+  right: 6px;
+}
+
+/* Sidebar Custom Menu Pills */
+.cozy-sidebar-menu {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 4px !important;
+}
+
+.cozy-sidebar-menu .ant-menu-item {
+  border-radius: 20px !important;
+  margin: 4px 8px !important;
+  width: auto !important;
+  font-weight: 600 !important;
+  font-size: 14px !important;
+  color: #d1e5d7 !important;
+  transition: all 0.2s ease !important;
+}
+
+.cozy-sidebar-menu .ant-menu-item:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #ffffff !important;
+}
+
+.cozy-sidebar-menu .ant-menu-item-selected {
+  background: #fdfcf9 !important;
+  color: var(--color-forest-dark) !important;
+  font-weight: 700 !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15) !important;
+}
+
+.cozy-sidebar-menu .ant-menu-item-selected .anticon {
+  color: var(--color-forest-dark) !important;
+}
+
+/* Custom Progress Bar - Pill style */
+.cozy-progress {
+  height: 12px;
+  background: #e9e3d5;
+  border-radius: 999px;
+  overflow: hidden;
+  position: relative;
+}
+
+.cozy-progress-bar {
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #609b6c 0%, #4a8055 100%);
+  transition: width 0.4s ease;
+}
+
+/* Leaf Badge */
+.leaf-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: #eaf3ec;
+  color: #2e5239;
+  padding: 4px 10px;
+  border-radius: 20px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+/* Smooth Earthy Scrollbar */
 ::-webkit-scrollbar {
-  width: 6px;
+  width: 8px;
+  height: 8px;
 }
+
 ::-webkit-scrollbar-track {
-  background: #f0f2f5;
+  background: #ede6d8;
 }
+
 ::-webkit-scrollbar-thumb {
-  background: #d9d9d9;
-  border-radius: 3px;
+  background: #c5baaa;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #a99d8b;
 }

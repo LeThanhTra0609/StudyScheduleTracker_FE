@@ -19,6 +19,7 @@ export default function LoginPage() {
       const res = await authApi.login(values);
       const { token, user } = res.data;
       setAuth(user, token);
+      sessionStorage.removeItem('push_prompt_dismissed');
       message.success('Đăng nhập thành công!');
       navigate('/');
     } catch (err: any) {

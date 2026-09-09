@@ -103,7 +103,7 @@ export default function ScheduleFormPage() {
 
   return (
     <div style={{ maxWidth: 720 }}>
-      <Title level={4}>{isEdit ? '✏️ Chỉnh sửa lịch học' : '➕ Thêm lịch học'}</Title>
+      <Title level={4}>{isEdit ? 'Chỉnh sửa lịch học' : 'Thêm lịch học'}</Title>
 
       {conflict && (
         <Alert

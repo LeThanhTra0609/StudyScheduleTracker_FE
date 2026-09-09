@@ -17,6 +17,6 @@ export const authApi = {
 
   getMe: () => apiClient.get('/auth/me'),
 
-  updateProfile: (data: Partial<{ name: string; avatar: string; notificationPreferences: object }>) =>
+  updateProfile: (data: Partial<{ name: string; avatar: string; phone: string; bio: string; notificationPreferences: object }>) =>
     apiClient.put('/auth/profile', data),
 };

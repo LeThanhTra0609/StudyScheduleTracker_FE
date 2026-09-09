@@ -45,7 +45,7 @@ export default function LocationsPage() {
   return (
     <div>
       <Space style={{ marginBottom: 16, justifyContent: 'space-between', width: '100%' }}>
-        <Title level={4} style={{ margin: 0 }}>📍 Địa điểm học</Title>
+        <Title level={4} style={{ margin: 0 }}>Địa điểm học</Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => openModal()}>Thêm địa điểm</Button>
       </Space>
 
