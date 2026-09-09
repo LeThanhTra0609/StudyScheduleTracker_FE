@@ -82,7 +82,7 @@ export default function SubjectsPage() {
   return (
     <div>
       <Space style={{ marginBottom: 16, justifyContent: 'space-between', width: '100%' }}>
-        <Title level={4} style={{ margin: 0 }}>📚 Môn học</Title>
+        <Title level={4} style={{ margin: 0 }}>Môn học</Title>
         <Button type="primary" icon={<PlusOutlined />} onClick={() => openModal()}>Thêm môn học</Button>
       </Space>
 
