@@ -7,11 +7,12 @@ import { getSocket } from '../socket/socket';
 import { useNotificationStore } from '../store/notificationStore';
 import { useAuthStore } from '../store/authStore';
 import { playNotificationSound } from '../utils/sound';
-import { registerServiceWorker } from '../utils/webPush';
+import { registerServiceWorkerAndAutoSubscribe } from '../utils/webPush';
 
 /**
  * Global Socket.IO & Notification listener hook.
  * Mount once at the top level (e.g. in AppLayout) to receive all server events.
+ * Also silently registers Service Worker and ensures push subscription is active.
  */
 export const useSocket = () => {
   const { user } = useAuthStore();
@@ -25,8 +26,9 @@ export const useSocket = () => {
     // 1. Fetch initial unread notifications from DB
     fetchNotifications();
 
-    // 2. Silently prepare Service Worker for Web Push in background
-    registerServiceWorker();
+    // 2. Register Service Worker + ensure push subscription is active in background.
+    //    This runs silently and auto-resubscribes if the subscription was lost.
+    registerServiceWorkerAndAutoSubscribe().catch(console.warn);
 
     const socket = getSocket();
 
@@ -73,7 +75,7 @@ export const useSocket = () => {
         metadata: data.metadata,
       });
 
-      // Show in-app banner toast
+      // Show in-app banner toast (only when app is open)
       notification.open({
         message: data.title || 'Thông báo mới',
         description: data.message,
@@ -88,7 +90,7 @@ export const useSocket = () => {
       });
     };
 
-    // Handler: Upcoming class reminder
+    // Handler: Upcoming class reminder (also triggers in-app toast when app is open)
     const handleUpcomingReminder = (data: {
       scheduleId: string;
       minutesBefore: number;
@@ -116,7 +118,7 @@ export const useSocket = () => {
         description: notifMsg,
         icon: React.createElement(ClockCircleOutlined, { style: { color: '#1677ff' } }),
         placement: 'topRight',
-        duration: 6,
+        duration: data.minutesBefore <= 15 ? 0 : 6, // Stay until dismissed for urgent reminders
         onClick: () => navigate(targetLink),
       });
     };
