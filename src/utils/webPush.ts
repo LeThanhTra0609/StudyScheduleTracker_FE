@@ -92,8 +92,15 @@ export const registerServiceWorker = async (): Promise<ServiceWorkerRegistration
   try {
     const registration = await navigator.serviceWorker.register('/sw.js', {
       scope: '/',
+      // updateViaCache: 'none' forces the browser to always check for a new SW
+      updateViaCache: 'none',
     });
+
+    // Force update check
+    await registration.update();
     await navigator.serviceWorker.ready;
+
+    console.log('[WebPush] Service Worker registered:', registration.scope);
     return registration;
   } catch (error) {
     console.error('[WebPush] Service Worker registration failed:', error);
@@ -114,6 +121,24 @@ export const checkIsSubscribed = async (): Promise<boolean> => {
     console.error('[WebPush] checkIsSubscribed error:', err);
     return false;
   }
+};
+
+/**
+ * Internal: send a PushSubscription to backend
+ */
+const sendSubscriptionToServer = async (subscription: PushSubscription): Promise<void> => {
+  const subJson = subscription.toJSON();
+  if (!subJson.endpoint || !subJson.keys?.p256dh || !subJson.keys?.auth) {
+    throw new Error('Thông tin đăng ký Push không hợp lệ.');
+  }
+  await notificationApi.subscribePush({
+    endpoint: subJson.endpoint,
+    keys: {
+      p256dh: subJson.keys.p256dh,
+      auth: subJson.keys.auth,
+    },
+    userAgent: navigator.userAgent,
+  });
 };
 
 /**
@@ -145,31 +170,83 @@ export const subscribeToWebPush = async (): Promise<{ success: boolean; message:
 
   const convertedVapidKey = urlBase64ToUint8Array(publicKey);
 
-  // 4. Subscribe to PushManager
+  // 4. Subscribe to PushManager (or reuse existing)
   let subscription = await registration.pushManager.getSubscription();
   if (!subscription) {
     subscription = await registration.pushManager.subscribe({
       userVisibleOnly: true,
       applicationServerKey: convertedVapidKey as unknown as BufferSource,
     });
-  }
-
-  const subJson = subscription.toJSON();
-  if (!subJson.endpoint || !subJson.keys?.p256dh || !subJson.keys?.auth) {
-    throw new Error('Thông tin đăng ký Push không hợp lệ.');
+    console.log('[WebPush] New push subscription created');
+  } else {
+    console.log('[WebPush] Reusing existing push subscription');
   }
 
   // 5. Send subscription to backend
-  await notificationApi.subscribePush({
-    endpoint: subJson.endpoint,
-    keys: {
-      p256dh: subJson.keys.p256dh,
-      auth: subJson.keys.auth,
-    },
-    userAgent: navigator.userAgent,
-  });
+  await sendSubscriptionToServer(subscription);
 
   return { success: true, message: 'Đăng ký nhận thông báo đẩy thành công!' };
+};
+
+/**
+ * Silently register SW + subscribe push in background after login.
+ * - If already subscribed, just ensures subscription is still valid with server.
+ * - If not subscribed and permission was already granted, auto-subscribe.
+ * - If permission is 'default' (not yet asked), will NOT ask — subscribe page / settings handles that.
+ */
+export const registerServiceWorkerAndAutoSubscribe = async (): Promise<void> => {
+  if (!isPushSupported()) return;
+
+  try {
+    // 1. Always register/update SW
+    const registration = await registerServiceWorker();
+    if (!registration) return;
+
+    // 2. Listen for subscription renewal messages from SW
+    navigator.serviceWorker.addEventListener('message', async (event) => {
+      if (event.data?.type === 'PUSH_SUBSCRIPTION_RENEWED') {
+        console.log('[WebPush] SW renewed subscription, re-registering with server...');
+        const reg = await navigator.serviceWorker.ready;
+        const sub = await reg.pushManager.getSubscription();
+        if (sub) {
+          await sendSubscriptionToServer(sub).catch(console.error);
+        }
+      }
+    });
+
+    // 3. Check current permission status
+    const permission = getNotificationPermission();
+
+    if (permission === 'granted') {
+      // Permission already granted → ensure subscription is active
+      const vapidRes = await notificationApi.getVapidPublicKey();
+      const publicKey = vapidRes.data?.publicKey;
+      if (!publicKey) return;
+
+      const convertedVapidKey = urlBase64ToUint8Array(publicKey);
+      let subscription = await registration.pushManager.getSubscription();
+
+      if (!subscription) {
+        // Subscription gone (browser cleared it) → re-subscribe silently
+        console.log('[WebPush] Permission granted but no subscription found, re-subscribing...');
+        subscription = await registration.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: convertedVapidKey as unknown as BufferSource,
+        });
+        console.log('[WebPush] Re-subscribed silently');
+      }
+
+      // Always sync current subscription to server (handles subscription endpoint changes)
+      await sendSubscriptionToServer(subscription).catch((err) => {
+        console.warn('[WebPush] Could not sync subscription to server:', err.message);
+      });
+    }
+    // If permission === 'default': do nothing (wait for user to enable in settings)
+    // If permission === 'denied': do nothing (user explicitly blocked)
+  } catch (error) {
+    // Silent fail — push is enhancement only, never block app
+    console.warn('[WebPush] Background registration error:', error);
+  }
 };
 
 /**
