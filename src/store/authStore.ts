@@ -1,7 +1,9 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { connectSocket, disconnectSocket } from '../socket/socket';
+import { updateTokenInSW, clearTokenInSW } from '../utils/webPush';
 import type { User } from '../types';
+
 
 interface AuthState {
   user: User | null;
@@ -25,6 +27,8 @@ export const useAuthStore = create<AuthState>()(
       setAuth: (user, token) => {
         localStorage.setItem('token', token);
         connectSocket(user._id);
+        // Save token to IndexedDB so SW can use it for push subscription renewal
+        updateTokenInSW(token).catch(console.warn);
         const initialChildId =
           user.role === 'PARENT' && user.children && user.children.length > 0
             ? user.children[0]._id
@@ -59,6 +63,8 @@ export const useAuthStore = create<AuthState>()(
         if (user) disconnectSocket(user._id);
         localStorage.removeItem('token');
         localStorage.removeItem('auth-storage');
+        // Clear token from SW IndexedDB on logout
+        clearTokenInSW().catch(console.warn);
         set({ user: null, token: null, selectedChildId: null, isAuthenticated: false });
       },
     }),

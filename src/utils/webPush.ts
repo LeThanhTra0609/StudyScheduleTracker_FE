@@ -1,5 +1,60 @@
 import { notificationApi } from '../api/notification.api';
 
+// ─── IndexedDB token storage for Service Worker ──────────────────────────────
+// The SW needs the JWT to auto-renew push subscriptions when they expire.
+// localStorage is NOT accessible from SW context, so we use IndexedDB.
+
+const SW_DB_NAME = 'sst-sw-store';
+const SW_STORE = 'auth';
+
+async function swDbOpen(): Promise<IDBDatabase> {
+  return new Promise((resolve, reject) => {
+    const req = indexedDB.open(SW_DB_NAME, 1);
+    req.onupgradeneeded = (e) => {
+      (e.target as IDBOpenDBRequest).result.createObjectStore(SW_STORE);
+    };
+    req.onsuccess = (e) => resolve((e.target as IDBOpenDBRequest).result);
+    req.onerror = (e) => reject((e.target as IDBOpenDBRequest).error);
+  });
+}
+
+/**
+ * Send JWT token to Service Worker to store in IndexedDB.
+ * Call this after every login and token refresh.
+ */
+export const updateTokenInSW = async (token: string): Promise<void> => {
+  try {
+    // 1. Store directly in IndexedDB (works even if SW not ready yet)
+    const db = await swDbOpen();
+    const tx = db.transaction(SW_STORE, 'readwrite');
+    tx.objectStore(SW_STORE).put(token, 'token');
+
+    // 2. Also postMessage to active SW (if running)
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: 'SET_AUTH_TOKEN', token });
+    }
+  } catch (err) {
+    console.warn('[WebPush] Could not save token to SW IndexedDB:', err);
+  }
+};
+
+/**
+ * Remove JWT token from SW IndexedDB on logout.
+ */
+export const clearTokenInSW = async (): Promise<void> => {
+  try {
+    const db = await swDbOpen();
+    const tx = db.transaction(SW_STORE, 'readwrite');
+    tx.objectStore(SW_STORE).delete('token');
+
+    if ('serviceWorker' in navigator && navigator.serviceWorker.controller) {
+      navigator.serviceWorker.controller.postMessage({ type: 'CLEAR_AUTH_TOKEN' });
+    }
+  } catch (err) {
+    console.warn('[WebPush] Could not clear token from SW IndexedDB:', err);
+  }
+};
+
 /**
  * Convert URL base64 string to Uint8Array for PushManager
  */
@@ -250,6 +305,32 @@ export const registerServiceWorkerAndAutoSubscribe = async (): Promise<void> => 
 };
 
 /**
+ * Trigger an immediate local OS notification via Service Worker
+ */
+export const showLocalTestNotification = async (title?: string, body?: string): Promise<boolean> => {
+  if (!isPushSupported()) return false;
+  try {
+    const reg = await navigator.serviceWorker.ready;
+    await reg.showNotification(title || '🔔 Kiểm tra thông báo StudyScheduleTracker', {
+      body: body || 'Đây là thông báo đẩy thử nghiệm trực tiếp trên hệ điều hành của bạn!',
+      icon: '/pwa-192.png',
+      badge: '/pwa-192.png',
+      vibrate: [200, 100, 200],
+      tag: `local-test-${Date.now()}`,
+      data: { url: '/calendar' },
+      actions: [
+        { action: 'open', title: '📅 Mở Lịch học' },
+        { action: 'dismiss', title: 'Đóng' },
+      ],
+    } as any);
+    return true;
+  } catch (err) {
+    console.error('[WebPush] showLocalTestNotification error:', err);
+    return false;
+  }
+};
+
+/**
  * Unsubscribe user from Web Push notifications
  */
 export const unsubscribeFromWebPush = async (): Promise<{ success: boolean; message: string }> => {
@@ -270,3 +351,4 @@ export const unsubscribeFromWebPush = async (): Promise<{ success: boolean; mess
     throw new Error(error.message || 'Không thể hủy đăng ký thông báo.');
   }
 };
+
