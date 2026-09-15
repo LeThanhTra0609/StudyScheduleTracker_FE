@@ -96,33 +96,44 @@ export default function SchedulePage() {
         }
       />
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+      {/* ── SEARCH & FILTER WHITE CARD ── */}
+      <div className="cozy-filter-card">
         <Input
-          prefix={<SearchOutlined />}
-          placeholder="Tìm môn học..."
+          prefix={<SearchOutlined style={{ color: '#2e5239' }} />}
+          placeholder="Tìm kiếm theo tên môn học..."
           value={search}
+          allowClear
           onChange={e => setSearch(e.target.value)}
-          style={{ flex: '1 1 180px', minWidth: 150 }}
+          className="cozy-search-input"
+          style={{ flex: '2 1 240px', minWidth: 200 }}
         />
         <Select
-          placeholder="Loại lịch"
+          placeholder="Tất cả loại lịch"
           allowClear
-          style={{ flex: '1 1 120px', minWidth: 120 }}
+          value={filterType}
+          style={{ flex: '1 1 140px', minWidth: 140 }}
           onChange={setFilterType}
-          options={[{ value: 'ACADEMIC', label: 'Chính khóa' }, { value: 'EXTRA_CLASS', label: 'Học thêm' }]}
-        />
-        <Select
-          placeholder="Trạng thái"
-          allowClear
-          style={{ flex: '1 1 140px', minWidth: 130 }}
-          onChange={setFilterStatus}
           options={[
-            { value: 'UPCOMING', label: 'Sắp diễn ra' },
-            { value: 'COMPLETED', label: 'Đã hoàn thành' },
-            { value: 'ABSENT', label: 'Vắng mặt' },
-            { value: 'CANCELLED', label: 'Đã hủy' },
+            { value: 'ACADEMIC', label: '📘 Chính khóa' },
+            { value: 'EXTRA_CLASS', label: '📙 Học thêm' },
           ]}
         />
+        <Select
+          placeholder="Tất cả trạng thái"
+          allowClear
+          value={filterStatus}
+          style={{ flex: '1 1 150px', minWidth: 150 }}
+          onChange={setFilterStatus}
+          options={[
+            { value: 'UPCOMING', label: '⏳ Sắp diễn ra' },
+            { value: 'COMPLETED', label: '✅ Đã hoàn thành' },
+            { value: 'ABSENT', label: '❌ Vắng mặt' },
+            { value: 'CANCELLED', label: '⚫ Đã hủy' },
+          ]}
+        />
+        <div style={{ marginLeft: 'auto', fontSize: 13, color: '#6e7f72', fontWeight: 600 }}>
+          Hiển thị <strong style={{ color: '#2e5239' }}>{filtered.length}</strong> / {schedules.length} lịch học
+        </div>
       </div>
 
       <Table dataSource={filtered} columns={columns} rowKey="_id" loading={loading} scroll={{ x: 700 }} />

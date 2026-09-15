@@ -32,6 +32,7 @@ import {
   CheckCircleOutlined,
   ExclamationCircleOutlined,
   CalendarOutlined,
+  SearchOutlined,
 } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { paymentApi } from '../../api/payment.api';
@@ -43,6 +44,7 @@ const { Title, Text, Paragraph } = Typography;
 
 export default function PaymentPage() {
   const [payments, setPayments] = useState<Payment[]>([]);
+  const [search, setSearch] = useState('');
   const [summary, setSummary] = useState<PaymentSummary | null>(null);
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [loading, setLoading] = useState(false);
@@ -167,20 +169,34 @@ export default function PaymentPage() {
     return null;
   };
 
-  // Filtered payments by tab
+  // Filtered payments by tab and search
   const filteredPayments = useMemo(() => {
     const now = dayjs().startOf('day');
     return payments.filter((p) => {
-      if (activeTab === 'UNPAID') return p.status !== 'PAID';
-      if (activeTab === 'PAID') return p.status === 'PAID';
+      // Tab filter
+      if (activeTab === 'UNPAID' && p.status === 'PAID') return false;
+      if (activeTab === 'PAID' && p.status !== 'PAID') return false;
       if (activeTab === 'URGENT') {
         if (p.status === 'PAID' || !p.dueDate) return false;
         const diff = dayjs(p.dueDate).startOf('day').diff(now, 'day');
-        return diff <= 7; // Overdue or due in <= 7 days
+        if (diff > 7) return false;
       }
+
+      // Search filter
+      if (search.trim()) {
+        const q = search.toLowerCase();
+        const sub = getSubject(p);
+        const subName = sub ? sub.name.toLowerCase() : '';
+        const period = (p.periodLabel || '').toLowerCase();
+        const notes = (p.notes || '').toLowerCase();
+        if (!subName.includes(q) && !period.includes(q) && !notes.includes(q)) {
+          return false;
+        }
+      }
+
       return true;
     });
-  }, [payments, activeTab]);
+  }, [payments, activeTab, search]);
 
   // Due date tag helper
   const renderDueDateBadge = (p: Payment) => {
@@ -470,6 +486,22 @@ export default function PaymentPage() {
         </Row>
       )}
 
+      {/* ── SEARCH & FILTER WHITE CARD ── */}
+      <div className="cozy-filter-card">
+        <Input
+          prefix={<SearchOutlined style={{ color: '#2e5239' }} />}
+          placeholder="Tìm kiếm theo tên môn học, kỳ thu hoặc ghi chú..."
+          value={search}
+          allowClear
+          onChange={e => setSearch(e.target.value)}
+          className="cozy-search-input"
+          style={{ flex: '1 1 300px', maxWidth: 450 }}
+        />
+        <div style={{ marginLeft: 'auto', fontSize: 13, color: '#6e7f72', fontWeight: 600 }}>
+          Hiển thị <strong style={{ color: '#2e5239' }}>{filteredPayments.length}</strong> / {payments.length} khoản
+        </div>
+      </div>
+
       {/* Tabs Filter */}
       <Tabs
         activeKey={activeTab}
@@ -489,7 +521,6 @@ export default function PaymentPage() {
             label: `Đã nộp (${payments.filter((p) => p.status === 'PAID').length})`,
           },
         ]}
-        style={{ marginBottom: 12 }}
       />
 
       {/* Table */}

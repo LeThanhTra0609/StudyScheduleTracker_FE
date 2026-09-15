@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Table, Tabs, Select, DatePicker, Space, Typography, Modal, Button, Form, Input, App } from 'antd';
+import { Table, Tabs, Select, DatePicker, Space, Typography, Modal, Button, Form, Input, App, Badge } from 'antd';
+import { SearchOutlined, CheckSquareOutlined, HistoryOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { attendanceApi } from '../../api/payment.api';
 import { scheduleApi } from '../../api/schedule.api';
@@ -13,6 +14,7 @@ const { RangePicker } = DatePicker;
 export default function AttendancePage() {
   const [history, setHistory] = useState<Attendance[]>([]);
   const [schedules, setSchedules] = useState<Schedule[]>([]);
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [markModal, setMarkModal] = useState<{ open: boolean; schedule: Schedule | null }>({ open: false, schedule: null });
   const [form] = Form.useForm();
@@ -75,6 +77,17 @@ export default function AttendancePage() {
     },
   ];
 
+  const filteredSchedules = schedules.filter(s => {
+    const sub = typeof s.subjectId === 'object' ? s.subjectId?.name : '';
+    return (sub || '').toLowerCase().includes(search.toLowerCase());
+  });
+
+  const filteredHistory = history.filter(a => {
+    const sub = getSubjectName(a);
+    const notes = a.notes || '';
+    return sub.toLowerCase().includes(search.toLowerCase()) || notes.toLowerCase().includes(search.toLowerCase());
+  });
+
   return (
     <div>
       <PageHeader
@@ -82,17 +95,43 @@ export default function AttendancePage() {
         icon="✍️"
         subtitle="Ghi nhận trạng thái tham gia, theo dõi lịch sử chuyên cần và buổi vắng"
       />
+
+      {/* ── SEARCH & FILTER WHITE CARD ── */}
+      <div className="cozy-filter-card">
+        <Input
+          prefix={<SearchOutlined style={{ color: '#2e5239' }} />}
+          placeholder="Tìm kiếm theo tên môn học hoặc ghi chú..."
+          value={search}
+          allowClear
+          onChange={e => setSearch(e.target.value)}
+          className="cozy-search-input"
+          style={{ flex: '1 1 300px', maxWidth: 450 }}
+        />
+      </div>
+
       <Tabs
         items={[
           {
             key: 'mark',
-            label: 'Đánh dấu buổi học',
-            children: <Table dataSource={schedules} columns={scheduleColumns} rowKey="_id" loading={loading} scroll={{ x: 600 }} />,
+            label: (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <CheckSquareOutlined />
+                Đánh dấu buổi học
+                <Badge count={filteredSchedules.length} style={{ backgroundColor: '#2e5239' }} />
+              </span>
+            ),
+            children: <Table dataSource={filteredSchedules} columns={scheduleColumns} rowKey="_id" loading={loading} scroll={{ x: 600 }} />,
           },
           {
             key: 'history',
-            label: 'Lịch sử điểm danh',
-            children: <Table dataSource={history} columns={historyColumns} rowKey="_id" loading={loading} scroll={{ x: 600 }} />,
+            label: (
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <HistoryOutlined />
+                Lịch sử điểm danh
+                <Badge count={filteredHistory.length} style={{ backgroundColor: '#52825b' }} />
+              </span>
+            ),
+            children: <Table dataSource={filteredHistory} columns={historyColumns} rowKey="_id" loading={loading} scroll={{ x: 600 }} />,
           },
         ]}
       />
