@@ -35,6 +35,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import isoWeek from 'dayjs/plugin/isoWeek';
 import { scheduleApi } from '../../api/schedule.api';
 import { StatusBadge, TypeBadge } from '../../components/common/StatusBadge';
+import { PageHeader } from '../../components/common/PageHeader';
 import { useMediaQuery } from '../../hooks/useMediaQuery';
 import type { Schedule } from '../../types';
 
@@ -143,34 +144,27 @@ export default function CalendarPage() {
 
   return (
     <div>
-      {/* Header bar */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'center',
-          marginBottom: 16,
-          flexWrap: 'wrap',
-          gap: 8,
-        }}
-      >
-        <Title level={4} style={{ margin: 0 }}>
-          Lịch học
-        </Title>
-        <Button
-          type="primary"
-          icon={<PlusOutlined />}
-          onClick={() => navigate('/schedules/new')}
-          style={{
-            background: 'linear-gradient(135deg, #2e5239 0%, #44714f 100%)',
-            borderColor: '#2e5239',
-            borderRadius: 20,
-            fontWeight: 700,
-          }}
-        >
-          Thêm lịch học
-        </Button>
-      </div>
+      <PageHeader
+        title="Lịch học & Thời khóa biểu"
+        icon="📅"
+        subtitle="Xem chi tiết lịch học theo ngày, tuần, tháng và dạng lưới thời khóa biểu"
+        extra={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate('/schedules/new')}
+            style={{
+              background: '#2e5239',
+              borderColor: '#2e5239',
+              borderRadius: 10,
+              fontWeight: 700,
+              boxShadow: '0 2px 8px rgba(46, 82, 57, 0.2)',
+            }}
+          >
+            Thêm lịch học
+          </Button>
+        }
+      />
 
       <Tabs
         activeKey={activeTab}

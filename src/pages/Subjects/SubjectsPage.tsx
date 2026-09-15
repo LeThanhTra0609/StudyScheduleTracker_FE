@@ -1,14 +1,15 @@
 import { useEffect, useState } from 'react';
 import { Table, Button, Space, Modal, Form, Input, Select, Popconfirm, Typography, App, Tag } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
+import { PlusOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons';
 import { subjectApi } from '../../api/subject.api';
+import { PageHeader } from '../../components/common/PageHeader';
 import type { Subject } from '../../types';
 
-const { Title } = Typography;
 const COLORS = ['#1677ff', '#52c41a', '#ff4d4f', '#fa8c16', '#722ed1', '#13c2c2', '#eb2f96', '#f5222d', '#faad14'];
 
 export default function SubjectsPage() {
   const [subjects, setSubjects] = useState<Subject[]>([]);
+  const [search, setSearch] = useState('');
   const [loading, setLoading] = useState(false);
   const [modalOpen, setModalOpen] = useState(false);
   const [editing, setEditing] = useState<Subject | null>(null);
@@ -79,14 +80,54 @@ export default function SubjectsPage() {
     },
   ];
 
+  const filtered = subjects.filter(s => {
+    const q = search.toLowerCase();
+    return s.name.toLowerCase().includes(q) ||
+      (s.code && s.code.toLowerCase().includes(q)) ||
+      (s.teacher && s.teacher.toLowerCase().includes(q));
+  });
+
   return (
     <div>
-      <Space style={{ marginBottom: 16, justifyContent: 'space-between', width: '100%' }}>
-        <Title level={4} style={{ margin: 0 }}>Môn học</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => openModal()}>Thêm môn học</Button>
-      </Space>
+      <PageHeader
+        title="Môn học"
+        icon="📚"
+        subtitle="Quản lý danh sách các môn học, mã môn và thông tin giảng viên"
+        extra={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => openModal()}
+            style={{
+              borderRadius: 10,
+              fontWeight: 700,
+              background: '#2e5239',
+              borderColor: '#2e5239',
+              boxShadow: '0 2px 8px rgba(46, 82, 57, 0.2)',
+            }}
+          >
+            Thêm môn học
+          </Button>
+        }
+      />
 
-      <Table dataSource={subjects} columns={columns} rowKey="_id" loading={loading} scroll={{ x: 600 }} />
+      {/* ── SEARCH & FILTER WHITE CARD ── */}
+      <div className="cozy-filter-card">
+        <Input
+          prefix={<SearchOutlined style={{ color: '#2e5239' }} />}
+          placeholder="Tìm kiếm môn học theo tên, mã môn hoặc giảng viên..."
+          value={search}
+          allowClear
+          onChange={e => setSearch(e.target.value)}
+          className="cozy-search-input"
+          style={{ flex: '1 1 300px', maxWidth: 450 }}
+        />
+        <div style={{ marginLeft: 'auto', fontSize: 13, color: '#6e7f72', fontWeight: 600 }}>
+          Hiển thị <strong style={{ color: '#2e5239' }}>{filtered.length}</strong> / {subjects.length} môn học
+        </div>
+      </div>
+
+      <Table dataSource={filtered} columns={columns} rowKey="_id" loading={loading} scroll={{ x: 600 }} />
 
       <Modal
         title={editing ? 'Chỉnh sửa môn học' : 'Thêm môn học'}

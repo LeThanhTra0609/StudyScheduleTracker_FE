@@ -12,6 +12,7 @@ import dayjs, { Dayjs } from 'dayjs';
 import { scheduleApi } from '../../api/schedule.api';
 import { subjectApi } from '../../api/subject.api';
 import { locationApi } from '../../api/location.api';
+import { PageHeader } from '../../components/common/PageHeader';
 import type { Subject, Location } from '../../types';
 
 const { Title, Text } = Typography;
@@ -221,25 +222,13 @@ export default function ScheduleFormPage() {
   };
 
   return (
-    <div style={{ maxWidth: 780 }}>
-      {/* Header */}
-      <div style={{ marginBottom: 20, display: 'flex', alignItems: 'center', gap: 12 }}>
-        <div style={{
-          width: 40, height: 40, borderRadius: 10,
-          background: 'linear-gradient(135deg, #1677ff, #722ed1)',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-        }}>
-          <CalendarOutlined style={{ color: '#fff', fontSize: 20 }} />
-        </div>
-        <div>
-          <Title level={4} style={{ margin: 0 }}>
-            {isEdit ? 'Chỉnh sửa lịch học' : 'Thêm lịch học mới'}
-          </Title>
-          <Text type="secondary" style={{ fontSize: 13 }}>
-            {isEdit ? 'Cập nhật thông tin buổi học' : 'Điền thông tin để tạo lịch học'}
-          </Text>
-        </div>
-      </div>
+    <div style={{ maxWidth: 860, margin: '0 auto' }}>
+      <PageHeader
+        title={isEdit ? 'Chỉnh sửa lịch học' : 'Thêm lịch học mới'}
+        icon="📅"
+        subtitle={isEdit ? 'Cập nhật thông tin buổi học, giáo viên và địa điểm' : 'Điền thông tin chi tiết để tạo lịch học mới'}
+        onBack={() => navigate(-1)}
+      />
 
       {conflict && (
         <Alert

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { Row, Col, Typography, Spin, Button, Tag, Alert, Progress, Divider } from 'antd';
+import { Row, Col, Typography, Spin, Button, Tag, Alert, Progress, Divider, Avatar } from 'antd';
 import {
   CalendarOutlined, CheckCircleOutlined, ClockCircleOutlined, RightOutlined,
   BookOutlined, EnvironmentOutlined, CreditCardOutlined, PlusOutlined,
-  FireOutlined, TrophyOutlined,
+  FireOutlined, TrophyOutlined, UserOutlined,
 } from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
@@ -156,31 +156,232 @@ export default function DashboardPage() {
     ? Math.round((paymentSummary.paidAmount / paymentSummary.totalAmount) * 100) : 100;
   const nextSession = todaySchedules.find(s => s.status === 'UPCOMING') || upcoming[0];
   const greetHour = now.hour();
-  const greeting = greetHour < 12 ? 'Chào buổi sáng' : greetHour < 18 ? 'Chào buổi chiều' : 'Chào buổi tối';
+  let greeting = 'Chào buổi sáng';
+  let greetingIcon = '🌅';
+  let greetingQuote = 'Chúc bạn một ngày học tập tràn đầy năng lượng và hiệu quả!';
+  let bannerGradient = 'linear-gradient(135deg, #f0f7f2 0%, #e3efe7 100%)';
+  let bannerBorder = '#d2e7d7';
+
+  if (greetHour >= 5 && greetHour < 12) {
+    greeting = 'Chào buổi sáng';
+    greetingIcon = '🌅';
+    greetingQuote = 'Chúc bạn một ngày học tập tràn đầy năng lượng và hiệu quả!';
+    bannerGradient = 'linear-gradient(135deg, #fff9f0 0%, #fef0db 100%)';
+    bannerBorder = '#fae1c3';
+  } else if (greetHour >= 12 && greetHour < 18) {
+    greeting = 'Chào buổi chiều';
+    greetingIcon = '☀️';
+    greetingQuote = 'Tiếp tục duy trì sự tập trung để hoàn thành tốt các mục tiêu hôm nay nhé!';
+    bannerGradient = 'linear-gradient(135deg, #f0f7f2 0%, #e2efe6 100%)';
+    bannerBorder = '#cde6d3';
+  } else if (greetHour >= 18 && greetHour < 22) {
+    greeting = 'Chào buổi tối';
+    greetingIcon = '🌙';
+    greetingQuote = 'Hãy kiểm tra lại bài học và dành thời gian nghỉ ngơi thư giãn nhé!';
+    bannerGradient = 'linear-gradient(135deg, #eff4fb 0%, #e2ebf8 100%)';
+    bannerBorder = '#cbdcf5';
+  } else {
+    greeting = 'Cú đêm chăm chỉ';
+    greetingIcon = '🌌';
+    greetingQuote = 'Nhớ nghỉ ngơi sớm để nạp đầy năng lượng cho ngày mai nhé!';
+    bannerGradient = 'linear-gradient(135deg, #f3f0fa 0%, #e7e2f5 100%)';
+    bannerBorder = '#dad3ef';
+  }
+
+  const displayName = user?.name ? user.name.split(' ').pop() : 'bạn';
 
   return (
     <div style={{ maxWidth: 1320, margin: '0 auto', paddingBottom: 40 }}>
 
-      {/* ── HEADER BAR ─────────────────────────────────────────────────────── */}
+      {/* ── HERO GREETING BANNER ─────────────────────────────────────────────── */}
       <div style={{
-        display: 'flex', justifyContent: 'space-between', alignItems: 'center',
-        marginBottom: 28, flexWrap: 'wrap', gap: 12,
+        background: bannerGradient,
+        border: `1px solid ${bannerBorder}`,
+        borderRadius: 20,
+        padding: '22px 26px',
+        marginBottom: 24,
+        boxShadow: '0 4px 18px rgba(40, 65, 45, 0.05)',
+        position: 'relative',
+        overflow: 'hidden',
       }}>
-        <div>
-          <div style={{ fontSize: 13, color: '#8c8c8c', marginBottom: 2 }}>
-            {now.format('dddd, DD/MM/YYYY')} · {now.format('HH:mm')}
+        {/* Decorative background ambient glows */}
+        <div style={{
+          position: 'absolute',
+          right: -30,
+          top: -30,
+          width: 150,
+          height: 150,
+          borderRadius: '50%',
+          background: 'rgba(255, 255, 255, 0.45)',
+          pointerEvents: 'none',
+        }} />
+        <div style={{
+          position: 'absolute',
+          right: 90,
+          bottom: -40,
+          width: 100,
+          height: 100,
+          borderRadius: '50%',
+          background: 'rgba(255, 255, 255, 0.3)',
+          pointerEvents: 'none',
+        }} />
+
+        <div style={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+          flexWrap: 'wrap',
+          gap: 18,
+          position: 'relative',
+          zIndex: 1,
+        }}>
+          {/* User info & Greeting */}
+          <div style={{ display: 'flex', alignItems: 'center', gap: 16, minWidth: 280, flex: 1 }}>
+            <div style={{ position: 'relative', flexShrink: 0 }}>
+              <Avatar
+                size={56}
+                style={{
+                  background: 'linear-gradient(135deg, #2e5239 0%, #44714f 100%)',
+                  color: '#fff',
+                  fontSize: 22,
+                  fontWeight: 700,
+                  boxShadow: '0 4px 12px rgba(46, 82, 57, 0.25)',
+                  border: '2px solid #fff',
+                }}
+              >
+                {user?.name ? user.name.charAt(0).toUpperCase() : <UserOutlined />}
+              </Avatar>
+              <span
+                title="Đang hoạt động"
+                style={{
+                  position: 'absolute',
+                  bottom: 1,
+                  right: 1,
+                  width: 13,
+                  height: 13,
+                  borderRadius: '50%',
+                  background: '#52c41a',
+                  border: '2px solid #fff',
+                }}
+              />
+            </div>
+
+            <div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 8, flexWrap: 'wrap', marginBottom: 3 }}>
+                <Title level={3} style={{ margin: 0, fontWeight: 800, color: '#243527', fontSize: 22, lineHeight: 1.2 }}>
+                  {greetingIcon} {greeting}, {displayName}! <span style={{ display: 'inline-block' }}>👋</span>
+                </Title>
+                <Tag style={{
+                  background: user?.role === 'PARENT' ? '#fff7e6' : '#eaf3ec',
+                  borderColor: user?.role === 'PARENT' ? '#ffd591' : '#b7dcbf',
+                  color: user?.role === 'PARENT' ? '#d46b08' : '#2e5239',
+                  borderRadius: 12,
+                  fontWeight: 700,
+                  fontSize: 11,
+                  padding: '1px 8px',
+                  margin: 0,
+                }}>
+                  {user?.role === 'PARENT' ? '👨‍👩‍👧 Phụ huynh' : '🎓 Học sinh'}
+                </Tag>
+              </div>
+
+              <div style={{ fontSize: 13, color: '#596e5d', marginTop: 2, lineHeight: 1.4 }}>
+                {greetingQuote}
+              </div>
+
+              {/* Status pill strip */}
+              <div style={{ display: 'flex', gap: 10, marginTop: 10, flexWrap: 'wrap', alignItems: 'center' }}>
+                <span style={{
+                  fontSize: 12,
+                  color: '#2e5239',
+                  background: 'rgba(255, 255, 255, 0.75)',
+                  backdropFilter: 'blur(4px)',
+                  padding: '3px 10px',
+                  borderRadius: 20,
+                  border: '1px solid rgba(255, 255, 255, 0.95)',
+                  display: 'inline-flex',
+                  alignItems: 'center',
+                  gap: 5,
+                  fontWeight: 600,
+                }}>
+                  📅 Hôm nay: <strong>{todaySchedules.length}</strong> buổi học ({completedToday} đã xong)
+                </span>
+                {nextSession && (
+                  <span style={{
+                    fontSize: 12,
+                    color: '#722ed1',
+                    background: 'rgba(255, 255, 255, 0.75)',
+                    backdropFilter: 'blur(4px)',
+                    padding: '3px 10px',
+                    borderRadius: 20,
+                    border: '1px solid rgba(255, 255, 255, 0.95)',
+                    display: 'inline-flex',
+                    alignItems: 'center',
+                    gap: 5,
+                    fontWeight: 600,
+                  }}>
+                    ⏳ Sắp tới: <strong>{subjectName(nextSession)}</strong> ({nextSession.startTime})
+                  </span>
+                )}
+              </div>
+            </div>
           </div>
-          <Title level={3} style={{ margin: 0, fontWeight: 800, color: '#111' }}>
-            {greeting}{user?.name ? ', ' + user.name.split(' ').pop() : ''}! 👋
-          </Title>
+
+          {/* Quick Actions & Live Clock */}
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 10 }}>
+            {/* Realtime date chip */}
+            <div style={{
+              background: 'rgba(255, 255, 255, 0.85)',
+              backdropFilter: 'blur(6px)',
+              padding: '6px 14px',
+              borderRadius: 30,
+              fontSize: 12,
+              color: '#445749',
+              fontWeight: 600,
+              border: '1px solid rgba(255, 255, 255, 0.95)',
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              boxShadow: '0 1px 4px rgba(0,0,0,0.03)',
+            }}>
+              <CalendarOutlined style={{ color: '#2e5239' }} />
+              <span>{now.format('dddd, DD/MM/YYYY')}</span>
+              <span style={{ color: '#b3c2b6' }}>•</span>
+              <ClockCircleOutlined style={{ color: '#2e5239' }} />
+              <span style={{ color: '#2e5239', fontWeight: 700 }}>{now.format('HH:mm')}</span>
+            </div>
+
+            {/* Action buttons */}
+            <div style={{ display: 'flex', gap: 8 }}>
+              <Button
+                onClick={() => navigate('/calendar')}
+                style={{
+                  borderRadius: 10,
+                  fontWeight: 600,
+                  background: '#fff',
+                  borderColor: '#d9e2db',
+                  color: '#243527',
+                }}
+              >
+                Xem lịch học
+              </Button>
+              <Button
+                type="primary"
+                icon={<PlusOutlined />}
+                onClick={() => navigate('/schedules/new')}
+                style={{
+                  borderRadius: 10,
+                  fontWeight: 700,
+                  background: '#2e5239',
+                  borderColor: '#2e5239',
+                  boxShadow: '0 2px 8px rgba(46, 82, 57, 0.2)',
+                }}
+              >
+                Thêm lịch mới
+              </Button>
+            </div>
+          </div>
         </div>
-        <Button
-          type="primary" icon={<PlusOutlined />} size="large"
-          onClick={() => navigate('/schedules/new')}
-          style={{ borderRadius: 10, fontWeight: 600 }}
-        >
-          Thêm lịch học
-        </Button>
       </div>
 
       {/* ── PAYMENT ALERT ──────────────────────────────────────────────────── */}

@@ -44,6 +44,7 @@ import {
 import { authApi } from '../../api/auth.api';
 import { userApi } from '../../api/user.api';
 import { notificationApi } from '../../api/notification.api';
+import { PageHeader } from '../../components/common/PageHeader';
 import { useAuthStore } from '../../store/authStore';
 import {
   subscribeToWebPush,
@@ -316,46 +317,11 @@ export default function SettingsPage() {
   return (
     <div style={{ maxWidth: 1100, margin: '0 auto', paddingBottom: 40 }}>
       {/* Top Banner Header */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #1c3523 0%, #2e5239 50%, #44714f 100%)',
-          borderRadius: 24,
-          padding: '28px 32px',
-          color: '#ffffff',
-          marginBottom: 24,
-          position: 'relative',
-          overflow: 'hidden',
-          boxShadow: '0 8px 24px rgba(28, 53, 35, 0.15)',
-        }}
-      >
-        <div style={{ position: 'relative', zIndex: 2 }}>
-          <div style={{ marginBottom: 6 }}>
-            <span style={{ fontSize: 13, textTransform: 'uppercase', letterSpacing: 1.5, fontWeight: 700, color: '#b9dfc4' }}>
-              Trung tâm quản lý cá nhân
-            </span>
-          </div>
-          <Title level={2} style={{ color: '#ffffff', margin: 0, fontWeight: 800, fontSize: 26 }}>
-            Hồ sơ & Cài đặt hệ thống
-          </Title>
-          <Paragraph style={{ color: '#d1e5d7', margin: '6px 0 0', maxWidth: 640, fontSize: 14 }}>
-            Tùy chỉnh thông tin tài khoản, cấu hình thông báo đa loại (nhắc trước giờ học, tổng kết lịch hôm nay) và quản lý liên kết gia đình.
-          </Paragraph>
-        </div>
-
-        {/* Decorative background circle */}
-        <div
-          style={{
-            position: 'absolute',
-            top: -40,
-            right: -40,
-            width: 220,
-            height: 220,
-            borderRadius: '50%',
-            background: 'radial-gradient(circle, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 70%)',
-            pointerEvents: 'none',
-          }}
-        />
-      </div>
+      <PageHeader
+        title="Hồ sơ & Cài đặt hệ thống"
+        icon="⚙️"
+        subtitle="Tùy chỉnh thông tin tài khoản, cấu hình thông báo và quản lý liên kết tài khoản"
+      />
 
       <Row gutter={[24, 24]}>
         {/* Left Column: Identity Card & Navigation */}

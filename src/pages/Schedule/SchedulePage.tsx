@@ -5,9 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { scheduleApi } from '../../api/schedule.api';
 import { StatusBadge, TypeBadge } from '../../components/common/StatusBadge';
+import { PageHeader } from '../../components/common/PageHeader';
 import type { Schedule } from '../../types';
-
-const { Title } = Typography;
 
 export default function SchedulePage() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
@@ -75,38 +74,66 @@ export default function SchedulePage() {
 
   return (
     <div>
-      <Space style={{ marginBottom: 16, justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
-        <Title level={4} style={{ margin: 0 }}>Lịch học của tôi</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/schedules/new')}>Thêm lịch</Button>
-      </Space>
+      <PageHeader
+        title="Lịch học của tôi"
+        icon="🗓️"
+        subtitle="Quản lý toàn bộ danh sách các buổi học, tìm kiếm và lọc theo trạng thái"
+        extra={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate('/schedules/new')}
+            style={{
+              background: '#2e5239',
+              borderColor: '#2e5239',
+              borderRadius: 10,
+              fontWeight: 700,
+              boxShadow: '0 2px 8px rgba(46, 82, 57, 0.2)',
+            }}
+          >
+            Thêm lịch học
+          </Button>
+        }
+      />
 
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
+      {/* ── SEARCH & FILTER WHITE CARD ── */}
+      <div className="cozy-filter-card">
         <Input
-          prefix={<SearchOutlined />}
-          placeholder="Tìm môn học..."
+          prefix={<SearchOutlined style={{ color: '#2e5239' }} />}
+          placeholder="Tìm kiếm theo tên môn học..."
           value={search}
+          allowClear
           onChange={e => setSearch(e.target.value)}
-          style={{ flex: '1 1 180px', minWidth: 150 }}
+          className="cozy-search-input"
+          style={{ flex: '2 1 240px', minWidth: 200 }}
         />
         <Select
-          placeholder="Loại lịch"
+          placeholder="Tất cả loại lịch"
           allowClear
-          style={{ flex: '1 1 120px', minWidth: 120 }}
+          value={filterType}
+          style={{ flex: '1 1 140px', minWidth: 140 }}
           onChange={setFilterType}
-          options={[{ value: 'ACADEMIC', label: 'Chính khóa' }, { value: 'EXTRA_CLASS', label: 'Học thêm' }]}
-        />
-        <Select
-          placeholder="Trạng thái"
-          allowClear
-          style={{ flex: '1 1 140px', minWidth: 130 }}
-          onChange={setFilterStatus}
           options={[
-            { value: 'UPCOMING', label: 'Sắp diễn ra' },
-            { value: 'COMPLETED', label: 'Đã hoàn thành' },
-            { value: 'ABSENT', label: 'Vắng mặt' },
-            { value: 'CANCELLED', label: 'Đã hủy' },
+            { value: 'ACADEMIC', label: '📘 Chính khóa' },
+            { value: 'EXTRA_CLASS', label: '📙 Học thêm' },
           ]}
         />
+        <Select
+          placeholder="Tất cả trạng thái"
+          allowClear
+          value={filterStatus}
+          style={{ flex: '1 1 150px', minWidth: 150 }}
+          onChange={setFilterStatus}
+          options={[
+            { value: 'UPCOMING', label: '⏳ Sắp diễn ra' },
+            { value: 'COMPLETED', label: '✅ Đã hoàn thành' },
+            { value: 'ABSENT', label: '❌ Vắng mặt' },
+            { value: 'CANCELLED', label: '⚫ Đã hủy' },
+          ]}
+        />
+        <div style={{ marginLeft: 'auto', fontSize: 13, color: '#6e7f72', fontWeight: 600 }}>
+          Hiển thị <strong style={{ color: '#2e5239' }}>{filtered.length}</strong> / {schedules.length} lịch học
+        </div>
       </div>
 
       <Table dataSource={filtered} columns={columns} rowKey="_id" loading={loading} scroll={{ x: 700 }} />
