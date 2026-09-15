@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Table, Button, Space, Modal, Form, Input, Select, Popconfirm, Typography, App, Tag } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { subjectApi } from '../../api/subject.api';
+import { PageHeader } from '../../components/common/PageHeader';
 import type { Subject } from '../../types';
 
-const { Title } = Typography;
 const COLORS = ['#1677ff', '#52c41a', '#ff4d4f', '#fa8c16', '#722ed1', '#13c2c2', '#eb2f96', '#f5222d', '#faad14'];
 
 export default function SubjectsPage() {
@@ -81,10 +81,27 @@ export default function SubjectsPage() {
 
   return (
     <div>
-      <Space style={{ marginBottom: 16, justifyContent: 'space-between', width: '100%' }}>
-        <Title level={4} style={{ margin: 0 }}>Môn học</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => openModal()}>Thêm môn học</Button>
-      </Space>
+      <PageHeader
+        title="Môn học"
+        icon="📚"
+        subtitle="Quản lý danh sách các môn học, mã môn và thông tin giảng viên"
+        extra={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => openModal()}
+            style={{
+              borderRadius: 10,
+              fontWeight: 700,
+              background: '#2e5239',
+              borderColor: '#2e5239',
+              boxShadow: '0 2px 8px rgba(46, 82, 57, 0.2)',
+            }}
+          >
+            Thêm môn học
+          </Button>
+        }
+      />
 
       <Table dataSource={subjects} columns={columns} rowKey="_id" loading={loading} scroll={{ x: 600 }} />
 

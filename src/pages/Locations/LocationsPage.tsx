@@ -2,9 +2,10 @@ import { useEffect, useState } from 'react';
 import { Card, Button, Space, Modal, Form, Input, Popconfirm, Typography, App, Row, Col } from 'antd';
 import { PlusOutlined, EditOutlined, DeleteOutlined, EnvironmentOutlined, LinkOutlined, VideoCameraOutlined } from '@ant-design/icons';
 import { locationApi } from '../../api/location.api';
+import { PageHeader } from '../../components/common/PageHeader';
 import type { Location } from '../../types';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 
 export default function LocationsPage() {
   const [locations, setLocations] = useState<Location[]>([]);
@@ -44,10 +45,27 @@ export default function LocationsPage() {
 
   return (
     <div>
-      <Space style={{ marginBottom: 16, justifyContent: 'space-between', width: '100%' }}>
-        <Title level={4} style={{ margin: 0 }}>Địa điểm học</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => openModal()}>Thêm địa điểm</Button>
-      </Space>
+      <PageHeader
+        title="Địa điểm học"
+        icon="📍"
+        subtitle="Quản lý các cơ sở học tập, phòng học trực tiếp và đường dẫn lớp học trực tuyến"
+        extra={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => openModal()}
+            style={{
+              borderRadius: 10,
+              fontWeight: 700,
+              background: '#2e5239',
+              borderColor: '#2e5239',
+              boxShadow: '0 2px 8px rgba(46, 82, 57, 0.2)',
+            }}
+          >
+            Thêm địa điểm
+          </Button>
+        }
+      />
 
       <Row gutter={[16, 16]}>
         {locations.map(loc => (

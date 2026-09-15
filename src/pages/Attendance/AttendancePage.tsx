@@ -4,9 +4,10 @@ import dayjs from 'dayjs';
 import { attendanceApi } from '../../api/payment.api';
 import { scheduleApi } from '../../api/schedule.api';
 import { StatusBadge } from '../../components/common/StatusBadge';
+import { PageHeader } from '../../components/common/PageHeader';
 import type { Attendance, Schedule, ScheduleStatus } from '../../types';
 
-const { Title, Text } = Typography;
+const { Text } = Typography;
 const { RangePicker } = DatePicker;
 
 export default function AttendancePage() {
@@ -76,7 +77,11 @@ export default function AttendancePage() {
 
   return (
     <div>
-      <Title level={4}>Điểm danh</Title>
+      <PageHeader
+        title="Điểm danh buổi học"
+        icon="✍️"
+        subtitle="Ghi nhận trạng thái tham gia, theo dõi lịch sử chuyên cần và buổi vắng"
+      />
       <Tabs
         items={[
           {

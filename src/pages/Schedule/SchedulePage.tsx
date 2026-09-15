@@ -5,9 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { scheduleApi } from '../../api/schedule.api';
 import { StatusBadge, TypeBadge } from '../../components/common/StatusBadge';
+import { PageHeader } from '../../components/common/PageHeader';
 import type { Schedule } from '../../types';
-
-const { Title } = Typography;
 
 export default function SchedulePage() {
   const [schedules, setSchedules] = useState<Schedule[]>([]);
@@ -75,10 +74,27 @@ export default function SchedulePage() {
 
   return (
     <div>
-      <Space style={{ marginBottom: 16, justifyContent: 'space-between', width: '100%', flexWrap: 'wrap' }}>
-        <Title level={4} style={{ margin: 0 }}>Lịch học của tôi</Title>
-        <Button type="primary" icon={<PlusOutlined />} onClick={() => navigate('/schedules/new')}>Thêm lịch</Button>
-      </Space>
+      <PageHeader
+        title="Lịch học của tôi"
+        icon="🗓️"
+        subtitle="Quản lý toàn bộ danh sách các buổi học, tìm kiếm và lọc theo trạng thái"
+        extra={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={() => navigate('/schedules/new')}
+            style={{
+              background: '#2e5239',
+              borderColor: '#2e5239',
+              borderRadius: 10,
+              fontWeight: 700,
+              boxShadow: '0 2px 8px rgba(46, 82, 57, 0.2)',
+            }}
+          >
+            Thêm lịch học
+          </Button>
+        }
+      />
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 8, marginBottom: 16 }}>
         <Input

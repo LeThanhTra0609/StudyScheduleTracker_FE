@@ -28,6 +28,7 @@ import {
 import dayjs from 'dayjs';
 import relativeTime from 'dayjs/plugin/relativeTime';
 import { useNotificationStore } from '../../store/notificationStore';
+import { PageHeader } from '../../components/common/PageHeader';
 import type { AppNotification } from '../../store/notificationStore';
 
 dayjs.extend(relativeTime);
@@ -110,43 +111,22 @@ export default function NotificationsPage() {
 
   return (
     <div style={{ maxWidth: 900, margin: '0 auto', paddingBottom: 40 }}>
-      {/* Top Banner Header */}
-      <div
-        style={{
-          background: 'linear-gradient(135deg, #1c3523 0%, #2e5239 50%, #44714f 100%)',
-          borderRadius: 24,
-          padding: '24px 30px',
-          color: '#ffffff',
-          marginBottom: 24,
-          boxShadow: '0 8px 24px rgba(28, 53, 35, 0.15)',
-        }}
-      >
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: 16 }}>
-          <div>
-            <div style={{ marginBottom: 4 }}>
-              <span style={{ fontSize: 12, textTransform: 'uppercase', letterSpacing: 1.5, fontWeight: 700, color: '#b9dfc4' }}>
-                Trung tâm tin tức & cảnh báo
-              </span>
-            </div>
-            <Title level={2} style={{ color: '#ffffff', margin: 0, fontWeight: 800, fontSize: 24 }}>
-              Hộp thư thông báo
-            </Title>
-            <Paragraph style={{ color: '#d1e5d7', margin: '4px 0 0', fontSize: 13 }}>
-              Theo dõi nhắc nhở trước giờ học, tin điểm danh tức thì và biến động lịch học của bạn.
-            </Paragraph>
-          </div>
-
+      {/* Top PageHeader */}
+      <PageHeader
+        title="Hộp thư thông báo"
+        icon="🔔"
+        subtitle="Theo dõi nhắc nhở trước giờ học, tin điểm danh tức thì và biến động lịch học"
+        extra={
           <Space wrap>
             <Button
               onClick={markAllRead}
               disabled={unreadCount === 0}
               icon={<CheckOutlined />}
               style={{
-                borderRadius: 16,
+                borderRadius: 10,
                 fontWeight: 600,
-                background: unreadCount > 0 ? 'rgba(255,255,255,0.2)' : 'rgba(255,255,255,0.08)',
-                borderColor: 'rgba(255,255,255,0.3)',
-                color: '#ffffff',
+                borderColor: '#d9e2db',
+                color: '#243527',
               }}
             >
               Đánh dấu tất cả đã đọc
@@ -163,14 +143,14 @@ export default function NotificationsPage() {
                 danger
                 icon={<DeleteOutlined />}
                 disabled={notifications.length === 0}
-                style={{ borderRadius: 16, fontWeight: 600 }}
+                style={{ borderRadius: 10, fontWeight: 600 }}
               >
                 Xóa tất cả
               </Button>
             </Popconfirm>
           </Space>
-        </div>
-      </div>
+        }
+      />
 
       {/* Filter Tabs Bar */}
       <Card

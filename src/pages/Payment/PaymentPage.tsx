@@ -36,6 +36,7 @@ import {
 import dayjs from 'dayjs';
 import { paymentApi } from '../../api/payment.api';
 import { subjectApi } from '../../api/subject.api';
+import { PageHeader } from '../../components/common/PageHeader';
 import type { Payment, PaymentSummary, Subject } from '../../types';
 
 const { Title, Text, Paragraph } = Typography;
@@ -368,29 +369,27 @@ export default function PaymentPage() {
 
   return (
     <div>
-      {/* Header */}
-      <div
-        style={{
-          display: 'flex',
-          justifyContent: 'space-between',
-          alignItems: 'flex-start',
-          flexWrap: 'wrap',
-          gap: 12,
-          marginBottom: 20,
-        }}
-      >
-        <div>
-          <Title level={4} style={{ margin: 0 }}>
-            Theo dõi hạn nộp học phí
-          </Title>
-          <Paragraph type="secondary" style={{ margin: 0 }}>
-            Theo dõi thời hạn và đánh dấu hoàn thành chỉ với 1 click khi đến hạn nộp
-          </Paragraph>
-        </div>
-        <Button type="primary" icon={<PlusOutlined />} onClick={openCreateModal}>
-          Thêm khoản học phí
-        </Button>
-      </div>
+      <PageHeader
+        title="Quản lý học phí"
+        icon="💳"
+        subtitle="Theo dõi thời hạn, tình trạng thanh toán và lịch sử nộp học phí"
+        extra={
+          <Button
+            type="primary"
+            icon={<PlusOutlined />}
+            onClick={openCreateModal}
+            style={{
+              background: '#2e5239',
+              borderColor: '#2e5239',
+              borderRadius: 10,
+              fontWeight: 700,
+              boxShadow: '0 2px 8px rgba(46, 82, 57, 0.2)',
+            }}
+          >
+            Thêm khoản học phí
+          </Button>
+        }
+      />
 
       {/* Overdue / Due Soon Alert Banner */}
       {summary && (summary.overdueCount ?? 0) > 0 && (

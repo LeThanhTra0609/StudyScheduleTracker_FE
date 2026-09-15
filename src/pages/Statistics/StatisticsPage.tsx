@@ -3,9 +3,8 @@ import { Card, Row, Col, Statistic, Table, Typography, Spin, Select, DatePicker 
 import { CheckCircleOutlined, CloseCircleOutlined, ClockCircleOutlined, BookOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { statsApi } from '../../api/payment.api';
+import { PageHeader } from '../../components/common/PageHeader';
 import type { StudyStats } from '../../types';
-
-const { Title } = Typography;
 
 export default function StatisticsPage() {
   const [study, setStudy] = useState<StudyStats | null>(null);
@@ -53,7 +52,11 @@ export default function StatisticsPage() {
 
   return (
     <div>
-      <Title level={4}>Thống kê</Title>
+      <PageHeader
+        title="Thống kê học tập & Báo cáo"
+        icon="📊"
+        subtitle="Tổng quan thời gian học tập, tỷ lệ hoàn thành môn học và học phí"
+      />
 
       {/* Overall */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
