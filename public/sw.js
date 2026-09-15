@@ -48,10 +48,26 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
 });
 
+const CACHE_NAME = 'sst-v2-cache';
+
 self.addEventListener('activate', (event) => {
   console.log('[SW] Activated');
-  // Take control of all open pages immediately (no reload needed)
-  event.waitUntil(self.clients.claim());
+  // Take control of all open pages immediately and prune old caches
+  event.waitUntil(
+    Promise.all([
+      self.clients.claim(),
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames
+            .filter((name) => name !== CACHE_NAME)
+            .map((name) => {
+              console.log('[SW] Pruning old cache:', name);
+              return caches.delete(name);
+            })
+        );
+      }),
+    ])
+  );
 });
 
 // ─── Web Push: Receive & Show Notification ───────────────────────────────────
