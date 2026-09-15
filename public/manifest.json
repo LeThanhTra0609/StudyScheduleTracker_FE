@@ -1,0 +1,40 @@
+{
+  "name": "Study Schedule Tracker - Quản lý Lịch học Thông minh",
+  "short_name": "Lịch Học",
+  "description": "Theo dõi lịch học, nhắc nhở giờ vào lớp, điểm danh và học phí thông minh.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#fbf8f2",
+  "theme_color": "#2e5239",
+  "orientation": "portrait-primary",
+  "icons": [
+    {
+      "src": "/pwa-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/pwa-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Lịch học",
+      "short_name": "Lịch",
+      "description": "Xem lịch học chi tiết",
+      "url": "/calendar",
+      "icons": [{ "src": "/pwa-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Thông báo",
+      "short_name": "Thông báo",
+      "description": "Xem thông báo mới nhất",
+      "url": "/notifications",
+      "icons": [{ "src": "/pwa-192.png", "sizes": "192x192" }]
+    }
+  ]
+}

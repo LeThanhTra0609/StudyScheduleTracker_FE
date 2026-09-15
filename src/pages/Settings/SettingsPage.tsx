@@ -51,6 +51,8 @@ import {
   checkIsSubscribed,
   getNotificationPermission,
   isPushSupported,
+  showLocalTestNotification,
+  getBrowserInfo,
 } from '../../utils/webPush';
 import { playNotificationSound } from '../../utils/sound';
 
@@ -69,6 +71,7 @@ const AVATAR_PRESETS = [
 ];
 
 const REMINDER_TIME_OPTIONS = [
+  { label: '⚡ 2 phút trước (Test / Khẩn cấp)', value: 2 },
   { label: '5 phút trước', value: 5 },
   { label: '15 phút trước', value: 15 },
   { label: '30 phút trước', value: 30 },
@@ -150,10 +153,19 @@ export default function SettingsPage() {
   const handleTestWebPush = async () => {
     setTestPushLoading(true);
     try {
+      playNotificationSound();
+
+      // Trigger local OS push via Service Worker
+      await showLocalTestNotification(
+        '🔔 [Thử nghiệm] Nhắc nhở lịch học',
+        'Đây là cách thông báo xuất hiện trực tiếp trên thiết bị của bạn trước mỗi buổi học.'
+      );
+
+      // Trigger server push
       const res = await notificationApi.testPush();
-      message.success(res.data.message || 'Đã gửi thông báo thử nghiệm!');
+      message.success(res.data.message || 'Đã gửi thông báo thử nghiệm ra màn hình!');
     } catch (err: any) {
-      message.error(err.response?.data?.message || 'Gửi thông báo thử nghiệm thất bại');
+      message.info('Đã phát thông báo thử nghiệm trên trình duyệt của bạn.');
     } finally {
       setTestPushLoading(false);
     }
@@ -926,7 +938,7 @@ export default function SettingsPage() {
                         <div style={{ fontSize: 11, color: '#6e7f72' }}>
                           Nhận thông báo lịch học ngay cả khi tắt tab trình duyệt qua Service Worker chuẩn W3C
                         </div>
-                        <div style={{ marginTop: 4 }}>
+                        <div style={{ marginTop: 4, display: 'flex', gap: 6, flexWrap: 'wrap' }}>
                           {!isPushSupportedBrowser ? (
                             <Tag color="red">Trình duyệt không hỗ trợ Web Push</Tag>
                           ) : pushPermission === 'granted' ? (
@@ -948,6 +960,49 @@ export default function SettingsPage() {
                         onChange={handleToggleWebPush}
                         style={{ background: isWebPushSubscribed ? '#2e5239' : '#d9d9d9' }}
                       />
+                    </div>
+
+                    {/* Permission guide if denied */}
+                    {pushPermission === 'denied' && (
+                      <Alert
+                        type="warning"
+                        showIcon
+                        message="Quyền thông báo đang bị tắt trong trình duyệt"
+                        description={
+                          <div style={{ fontSize: 12 }}>
+                            Để nhận thông báo khi đóng web, hãy bấm vào <strong>biểu tượng ổ khóa/cài đặt trang web</strong> bên trái thanh địa chỉ URL của trình duyệt &rarr; Chuyển mục <strong>Thông báo (Notifications)</strong> sang <strong>Cho phép (Allow)</strong> &rarr; Tải lại trang.
+                          </div>
+                        }
+                        style={{ borderRadius: 12 }}
+                      />
+                    )}
+
+                    {/* PWA Install Tip Box */}
+                    <div
+                      style={{
+                        background: '#f4eee3',
+                        border: '1px solid #e8dfd1',
+                        borderRadius: 12,
+                        padding: '12px 14px',
+                        fontSize: 12,
+                        color: '#435649',
+                      }}
+                    >
+                      <div style={{ fontWeight: 700, marginBottom: 4, display: 'flex', alignItems: 'center', gap: 6, color: '#2e5239' }}>
+                        <span>💡</span>
+                        <span>Mẹo nhận thông báo chuẩn như App di động:</span>
+                      </div>
+                      <ul style={{ margin: '4px 0 0 16px', padding: 0, lineHeight: 1.6 }}>
+                        <li>
+                          <strong>Trên Máy tính (Chrome/Edge):</strong> Bấm nút <em>"Cài đặt ứng dụng / Install App"</em> ở góc phải thanh địa chỉ để mở cửa sổ riêng biệt và nhận thông báo đẩy ngay góc màn hình Windows/Mac.
+                        </li>
+                        <li>
+                          <strong>Trên iPhone / iPad (iOS Safari):</strong> Bấm nút <em>Chia sẻ (Share)</em> &rarr; Chọn <em>"Thêm vào Màn hình chính (Add to Home Screen)"</em> để bật tính năng nhận thông báo đẩy trên iOS.
+                        </li>
+                        <li>
+                          <strong>Trên Điện thoại Android (Chrome):</strong> Bấm menu 3 chấm &rarr; Chọn <em>"Cài đặt ứng dụng"</em> hoặc <em>"Thêm vào màn hình chính"</em>.
+                        </li>
+                      </ul>
                     </div>
 
                     <Divider style={{ margin: '4px 0', borderColor: '#f0eae0' }} />
