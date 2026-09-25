@@ -253,3 +253,13 @@ body {
   background: #ffffff !important;
 }
 
+/* ── Schedule table: hôm nay highlight ── */
+.schedule-row-today > td {
+  background: linear-gradient(90deg, #f0f9f2 0%, #fafffe 100%) !important;
+  border-left: 3px solid #2e5239 !important;
+  font-weight: 500;
+}
+
+.schedule-row-today:hover > td {
+  background: #e6f4ea !important;
+}

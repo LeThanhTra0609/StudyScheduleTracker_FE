@@ -117,10 +117,14 @@ export default function ScheduleFormPage() {
         setIsExtraClass(s.type === 'EXTRA_CLASS');
         setTuitionEnabled(s.tuition?.enabled ?? false);
         if (s.color) setSelectedColor(s.color);
+      } else {
+        // ← FIX: sync default time range into form fields so required validation passes
+        syncTimeToForm(timeRange);
       }
     };
     init();
   }, [id]);
+
 
   const checkConflict = async () => {
     const date = form.getFieldValue('date');
@@ -190,18 +194,34 @@ export default function ScheduleFormPage() {
   const onFinish = async (values: Record<string, unknown>) => {
     setLoading(true);
     try {
+      // Exclude startTime/endTime from form values — use slider state instead
+      const { startTime: _st, endTime: _et, ...restValues } = values;
+      void _st; void _et;
+
+      const startDateStr = (values.date as Dayjs).format('YYYY-MM-DD');
+      const endDateStr = values.recurringEndDate
+        ? (values.recurringEndDate as Dayjs).format('YYYY-MM-DD')
+        : undefined;
+
+      // Validate recurring end date is after start date
+      if (isRecurring && endDateStr && endDateStr < startDateStr) {
+        message.error('Ngày kết thúc lặp phải sau ngày bắt đầu');
+        setLoading(false);
+        return;
+      }
+
       const payload = {
-        ...values,
-        date: (values.date as Dayjs).format('YYYY-MM-DD'),
+        ...restValues,
+        date: startDateStr,
         startTime: minutesToTime(timeRange[0]),
         endTime: minutesToTime(timeRange[1]),
-        recurringEndDate: values.recurringEndDate
-          ? (values.recurringEndDate as Dayjs).format('YYYY-MM-DD')
-          : undefined,
-        recurringStartDate: values.date
-          ? (values.date as Dayjs).format('YYYY-MM-DD')
-          : undefined,
-        'tuition.enabled': tuitionEnabled,
+        isRecurring,
+        recurringEndDate: endDateStr,
+        recurringStartDate: startDateStr,
+        tuition: {
+          ...((restValues.tuition as Record<string, unknown>) || {}),
+          enabled: tuitionEnabled,
+        },
         color: selectedColor,
       };
 
@@ -543,12 +563,20 @@ export default function ScheduleFormPage() {
                   </Space>
                 </Checkbox.Group>
               </Form.Item>
-              <Form.Item name="recurringEndDate" label="Lặp đến ngày">
+              <Form.Item
+                name="recurringEndDate"
+                label="Lặp đến ngày"
+                rules={[{ required: true, message: 'Vui lòng chọn ngày kết thúc lặp lại' }]}
+              >
                 <DatePicker
                   format="DD/MM/YYYY"
                   placeholder="Chọn ngày kết thúc lặp"
                   style={{ width: '100%' }}
-                  disabledDate={current => current && current < dayjs().startOf('day')}
+                  disabledDate={current => {
+                    const startDate = form.getFieldValue('date');
+                    const minDate = startDate ? startDate : dayjs();
+                    return current && current < minDate.startOf('day');
+                  }}
                 />
               </Form.Item>
             </>
