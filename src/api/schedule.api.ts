@@ -19,6 +19,7 @@ export const scheduleApi = {
   create: (data: object) => apiClient.post('/schedules', data),
   update: (id: string, data: object) => apiClient.put(`/schedules/${id}`, data),
   delete: (id: string) => apiClient.delete(`/schedules/${id}`),
+  deletePast: () => apiClient.delete('/schedules/past'),
   deleteRecurringSeries: (groupId: string) => apiClient.delete(`/schedules/recurring/${groupId}`),
   markAttendance: (id: string, data: { status: string; notes?: string }) =>
     apiClient.patch(`/schedules/${id}/attendance`, data),
